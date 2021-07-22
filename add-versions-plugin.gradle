@@ -1,0 +1,21 @@
+initscript {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:+'
+        classpath "com.dipien:bye-bye-jetifier:+"
+    }
+}
+
+rootProject {
+    apply plugin: com.github.benmanes.gradle.versions.VersionsPlugin
+    apply plugin: com.dipien.byebyejetifier.ByeByeJetifierGradlePlugin
+
+    tasks.named("dependencyUpdates").configure {
+        outputFormatter = "json"
+        outputDir = "$rootDir"
+    }
+}

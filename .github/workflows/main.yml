@@ -1,0 +1,24 @@
+name: Build README
+on:
+  workflow_dispatch:
+  push:
+  schedule:
+    - cron: '30 5,17 * * *'
+jobs:
+  woocommerce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: kotlinc -script script.main.kts -- "https://github.com/woocommerce/woocommerce-android"
+  wordpress:
+    runs-on: ubuntu-latest
+    needs: [ woocommerce ]
+    steps:
+      - uses: actions/checkout@v2
+      - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-Android"
+  simplenote:
+    runs-on: ubuntu-latest
+    needs: [ wordpress ]
+    steps:
+      - uses: actions/checkout@v2
+      - run: kotlinc -script script.main.kts -- "https://github.com/Automattic/simplenote-android"
