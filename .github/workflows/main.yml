@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
   schedule:
-    - cron: '30 5,17 * * *'
+    - cron: '12 02 * * *'
 jobs:
   woocommerce:
     runs-on: ubuntu-latest
