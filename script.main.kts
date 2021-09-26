@@ -53,7 +53,7 @@ val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatterBuilder()
     .appendValue(ChronoField.YEAR)
     .toFormatter()
 
-val STATS_FILE = File(REPOSITORY_NAME)
+val STATS_FILE = File("$REPOSITORY_NAME.csv")
 
 if (STATS_FILE.exists().not()) {
     STATS_FILE.apply {
