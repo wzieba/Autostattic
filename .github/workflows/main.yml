@@ -1,4 +1,4 @@
-name: Build README
+name: Build statistics
 on:
   workflow_dispatch:
   push:
