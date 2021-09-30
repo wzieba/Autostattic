@@ -62,7 +62,7 @@ val STATS_FILE = File("$REPOSITORY_NAME.csv")
 if (STATS_FILE.exists().not()) {
     STATS_FILE.apply {
         createNewFile()
-        writeText("date,outdated dependencies,all dependencies")
+        writeText("date,outdated dependencies,all dependencies,kotlin lines,java lines")
     }
 }
 
@@ -73,22 +73,18 @@ val moshi = Moshi.Builder()
 val LocalDateTime.asString: String
     get() = format(DATE_FORMATTER)
 
-data class DependenciesContainer(
-    val count: Int,
-    val outdated: Outdated,
-)
-
 val dependenciesContainerAdapter: JsonAdapter<DependenciesContainer> = moshi.adapter(DependenciesContainer::class.java)
 
+data class DependenciesContainer(val count: Int, val outdated: Outdated)
 data class Outdated(val dependencies: List<Dependency>)
-
-data class Dependency(
-    val group: String,
-    val name: String,
-    val version: String,
-) {
+data class Dependency(val group: String, val name: String, val version: String) {
     val id = "$group:$name"
 }
+
+data class ClocResult(@Json(name = "code") val codeLines: Long)
+data class ClocContainer(@Json(name = "Kotlin") val kotlin: ClocResult, @Json(name = "Java") val java: ClocResult)
+
+val clocContainerAdapter: JsonAdapter<ClocContainer> = moshi.adapter(ClocContainer::class.java)
 
 System.setProperty("java.awt.headless", "false")
 
@@ -99,13 +95,18 @@ shellRun {
 
     println(command("git", listOf("show", "--summary")))
 
+    val clocReportFileName = "cloc.json"
+    println(command("cloc", listOf("--json", "--include-lang=Kotlin,Java", "--report-file=$clocReportFileName", ".")))
+    val clocReport = File("$REPOSITORY_DIR/$clocReportFileName").readText()
+    val clocContainer = clocContainerAdapter.fromJson(clocReport)!!
+
     println(command("./gradlew", listOf("dependencyUpdate", "--console=plain", "--refresh-dependencies")))
-    val report = File("$REPOSITORY_DIR/report.json").readText()
-    val container = dependenciesContainerAdapter.fromJson(report)!!
+    val dependencyReport = File("$REPOSITORY_DIR/report.json").readText()
+    val dependenciesContainer = dependenciesContainerAdapter.fromJson(dependencyReport)!!
 
     STATS_FILE.apply {
         if (STATS_FILE.readText().contains(today.asString).not()) {
-            appendText("\n${today.asString},${container.outdated.dependencies.size},${container.count}")
+            appendText("\n${today.asString},${dependenciesContainer.outdated.dependencies.size},${dependenciesContainer.count},${clocContainer.kotlin.codeLines},${clocContainer.java.codeLines}")
         }
     }
     ""
@@ -115,6 +116,7 @@ shellRun {
 println("Committing stats update")
 
 shellRun {
+    println(command("cat", listOf("$STATS_FILE")))
     command("git", listOf("pull"))
     command("git", listOf("add", "-A"))
     command("git", listOf("config", "--local", "user.email", "\"action@github.com\""))

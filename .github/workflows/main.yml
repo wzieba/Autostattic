@@ -8,29 +8,34 @@ jobs:
   woocommerce:
     runs-on: ubuntu-latest
     steps:
+      - run: brew install cloc
       - uses: actions/checkout@v2
       - run: kotlinc -script script.main.kts -- "https://github.com/woocommerce/woocommerce-android"
   wordpress:
     runs-on: ubuntu-latest
     needs: [ woocommerce ]
     steps:
+      - run: brew install cloc
       - uses: actions/checkout@v2
       - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-Android"
   simplenote:
     runs-on: ubuntu-latest
     needs: [ wordpress ]
     steps:
+      - run: brew install cloc
       - uses: actions/checkout@v2
       - run: kotlinc -script script.main.kts -- "https://github.com/Automattic/simplenote-android"
   fluxc:
     runs-on: ubuntu-latest
     needs: [ simplenote ]
     steps:
+      - run: brew install cloc
       - uses: actions/checkout@v2
       - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-FluxC-Android"
   wcstoreapp:
     runs-on: ubuntu-latest
     needs: [ fluxc ]
     steps:
+      - run: brew install cloc
       - uses: actions/checkout@v2
       - run: kotlinc -script script.main.kts -- "https://github.com/hichamboushaba/WCStoreApp"
