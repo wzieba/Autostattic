@@ -40,6 +40,10 @@ shellRun {
     if (File("$REPOSITORY_DIR/gradle.properties-example").exists()) {
         command("cp", listOf("gradle.properties-example", "gradle.properties"))
     }
+
+    if (File("$REPOSITORY_DIR/local.properties-example").exists()) {
+        command("cp", listOf("local.properties-example", "local.properties"))
+    }
     ""
 }
 
