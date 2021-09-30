@@ -28,3 +28,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-FluxC-Android"
+  wcstoreapp:
+    runs-on: ubuntu-latest
+    needs: [ fluxc ]
+    steps:
+      - uses: actions/checkout@v2
+      - run: kotlinc -script script.main.kts -- "https://github.com/hichamboushaba/WCStoreApp"
