@@ -100,7 +100,6 @@ shellRun {
     println(command("git", listOf("show", "--summary")))
 
     println(command("./gradlew", listOf("dependencyUpdate", "--console=plain", "--refresh-dependencies")))
-
     val report = File("$REPOSITORY_DIR/report.json").readText()
     val container = dependenciesContainerAdapter.fromJson(report)!!
 
