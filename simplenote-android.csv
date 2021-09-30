@@ -1,4 +1,4 @@
-date,outdated dependencies,all dependencies
+date,outdated dependencies,all dependencies,kotlin lines,java lines
 25/09/2021,33,45
 26/09/2021,33,45
 27/09/2021,33,45
@@ -9,4 +9,3 @@ date,outdated dependencies,all dependencies
 02/10/2021,36,45
 03/10/2021,36,45
 04/10/2021,36,45
-05/10/2021,36,45
