@@ -97,13 +97,7 @@ val today: LocalDateTime = LocalDateTime.now()
 shellRun {
     changeWorkingDirectory(REPOSITORY_DIR)
 
-    val hash = git.gitCommand(listOf("log", "--before=\"${today.asString}\"", "--format=\"%H\"", "-1"))
-
-    println("Hash for ${today.asString} $hash")
-
-    git.checkout(hash)
-
-    println(command("git", listOf("status")))
+    println(command("git", listOf("show", "--summary")))
 
     println(command("./gradlew", listOf("dependencyUpdate", "--console=plain", "--refresh-dependencies")))
 
