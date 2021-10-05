@@ -15,7 +15,16 @@ rootProject {
     apply plugin: com.dipien.byebyejetifier.ByeByeJetifierGradlePlugin
 
     tasks.named("dependencyUpdates").configure {
+        def isNonStable = { String version ->
+            def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
+            def regex = /^[0-9,.v-]+(-r)?$/
+            return !stableKeyword && !(version ==~ regex)
+        }
+
         outputFormatter = "json"
         outputDir = "$rootDir"
+        rejectVersionIf {
+            isNonStable(it.candidate.version) && !isNonStable(it.currentVersion)
+        }
     }
 }
