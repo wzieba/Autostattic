@@ -73,6 +73,8 @@ val moshi = Moshi.Builder()
 val LocalDateTime.asString: String
     get() = format(DATE_FORMATTER)
 
+fun Long?.orEmpty() = this?.toString().orEmpty()
+
 val dependenciesContainerAdapter: JsonAdapter<DependenciesContainer> = moshi.adapter(DependenciesContainer::class.java)
 
 data class DependenciesContainer(val count: Int, val outdated: Outdated)
@@ -82,7 +84,7 @@ data class Dependency(val group: String, val name: String, val version: String) 
 }
 
 data class ClocResult(@Json(name = "code") val codeLines: Long)
-data class ClocContainer(@Json(name = "Kotlin") val kotlin: ClocResult, @Json(name = "Java") val java: ClocResult)
+data class ClocContainer(@Json(name = "Kotlin") val kotlin: ClocResult?, @Json(name = "Java") val java: ClocResult?)
 
 val clocContainerAdapter: JsonAdapter<ClocContainer> = moshi.adapter(ClocContainer::class.java)
 
@@ -106,7 +108,20 @@ shellRun {
 
     STATS_FILE.apply {
         if (STATS_FILE.readText().contains(today.asString).not()) {
-            appendText("\n${today.asString},${dependenciesContainer.outdated.dependencies.size},${dependenciesContainer.count},${clocContainer.kotlin.codeLines},${clocContainer.java.codeLines}")
+            appendText(
+                    StringBuilder()
+                    .append("\n")
+                    .append(today.asString)
+                    .append(",")
+                    .append(dependenciesContainer.outdated.dependencies.size)
+                    .append(",")
+                    .append(dependenciesContainer.count)
+                    .append(",")
+                    .append(clocContainer.kotlin?.codeLines.orEmpty())
+                    .append(",")
+                    .append(clocContainer.java?.codeLines.orEmpty())
+                    .toString()
+            )
         }
     }
     ""
