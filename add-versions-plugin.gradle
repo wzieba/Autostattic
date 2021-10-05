@@ -16,7 +16,7 @@ rootProject {
 
     tasks.named("dependencyUpdates").configure {
         def isNonStable = { String version ->
-            def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
+            def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { keyword -> version.toUpperCase().contains(keyword) }
             def regex = /^[0-9,.v-]+(-r)?$/
             return !stableKeyword && !(version ==~ regex)
         }
