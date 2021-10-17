@@ -4,7 +4,7 @@ Autostattic is a tool for observing metrics of open-source Android projects. It 
 run periodically to execute set of tasks and saves results in csv files in this repository. Then, those results are used 
 in [Autostattic Browser](https://github.com/wzieba/Autostattic/tree/browser) project to display values and draw charts. 
 
-Currently, it supports measuring % of outdated dependencies in following projects:
+Currently, it supports:
 - [WooCommerce](https://github.com/woocommerce/woocommerce-android)
 - [WordPress](https://github.com/wordpress-mobile/WordPress-Android)
 - [Simplenote](https://github.com/Automattic/simplenote-android)
