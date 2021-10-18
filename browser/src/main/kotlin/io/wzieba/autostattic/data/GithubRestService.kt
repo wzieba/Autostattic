@@ -14,7 +14,7 @@ class GithubRestService {
     private val csvParser = CsvParser()
 
     suspend fun getStatisticsFor(project: Project): List<Record> {
-        return restClient.callDynamic("$API_URL/${project.repositoryName}")
+        return restClient.callDynamic("$API_URL/results/${project.repositoryName}")
                 .then<String> { githubResponse: dynamic ->
                     val content = githubResponse.content as String
                     window.atob(content)
