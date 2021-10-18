@@ -11,6 +11,7 @@ jobs:
       - run: brew install cloc
       - uses: actions/checkout@v2
       - run: kotlinc -script script.main.kts -- "https://github.com/woocommerce/woocommerce-android"
+        working-directory: script
   wordpress:
     runs-on: ubuntu-latest
     needs: [ woocommerce ]
@@ -18,6 +19,7 @@ jobs:
       - run: brew install cloc
       - uses: actions/checkout@v2
       - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-Android"
+        working-directory: script
   simplenote:
     runs-on: ubuntu-latest
     needs: [ wordpress ]
@@ -25,6 +27,7 @@ jobs:
       - run: brew install cloc
       - uses: actions/checkout@v2
       - run: kotlinc -script script.main.kts -- "https://github.com/Automattic/simplenote-android"
+        working-directory: script
   fluxc:
     runs-on: ubuntu-latest
     needs: [ simplenote ]
@@ -32,6 +35,7 @@ jobs:
       - run: brew install cloc
       - uses: actions/checkout@v2
       - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-FluxC-Android"
+        working-directory: script
   wcstoreapp:
     runs-on: ubuntu-latest
     needs: [ fluxc ]
@@ -39,3 +43,21 @@ jobs:
       - run: brew install cloc
       - uses: actions/checkout@v2
       - run: kotlinc -script script.main.kts -- "https://github.com/hichamboushaba/WCStoreApp"
+        working-directory: script
+  build:
+    runs-on: ubuntu-latest
+    name: "Build browser site"
+    needs: [ wcstoreapp ]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 1.8
+      - name: Distribution
+        run: ./gradlew dist
+        working-directory: browser
+      - name: GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3.7.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: browser/build/dist
