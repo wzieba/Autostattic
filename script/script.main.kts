@@ -2,11 +2,17 @@
 @file:DependsOn("com.squareup.moshi:moshi-kotlin:1.12.0")
 @file:DependsOn("com.squareup.moshi:moshi-adapters:1.12.0")
 @file:DependsOn("com.lordcodes.turtle:turtle:0.5.0")
+@file:DependsOn("eu.jrie.jetbrains:kotlin-shell-kts:0.2.1")
 @file:CompilerOptions("-jvm-target", "11")
+@file:Suppress("EXPERIMENTAL_API_USAGE")
 
 import com.lordcodes.turtle.shellRun
-import com.squareup.moshi.*
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import eu.jrie.jetbrains.kotlinshell.shell.shell
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -16,36 +22,17 @@ import java.time.temporal.ChronoField
 
 println("Setting up Init Gradle Plugins")
 
-shellRun {
-    val gradleInitDirectory = "/home/runner/.gradle/init.d/"
 
-    command("mkdir", listOf("-p", gradleInitDirectory))
-    command("cp", listOf("add-versions-plugin.gradle", gradleInitDirectory))
-    println(command("ls", listOf("-la", gradleInitDirectory)))
-    ""
-}
 
 println("Repository configuration")
 
 val REPOSITORY_URL_ARGUMENT_ORDER = 0
+val COMPILE_TASK_ARGUMENT_ORDER = 1
 val REPOSITORY_URL = args[REPOSITORY_URL_ARGUMENT_ORDER]
 val REPOSITORY_NAME = REPOSITORY_URL.substring(REPOSITORY_URL.lastIndexOf('/') + 1)
 val REPOSITORY_DIR = "repo"
 
-shellRun {
-    git.clone(REPOSITORY_URL, REPOSITORY_DIR)
 
-    changeWorkingDirectory(REPOSITORY_DIR)
-
-    if (File("$REPOSITORY_DIR/gradle.properties-example").exists()) {
-        command("cp", listOf("gradle.properties-example", "gradle.properties"))
-    }
-
-    if (File("$REPOSITORY_DIR/local.properties-example").exists()) {
-        command("cp", listOf("local.properties-example", "local.properties"))
-    }
-    ""
-}
 
 println("Generating report")
 
@@ -62,7 +49,7 @@ val STATS_FILE = File("../results/$REPOSITORY_NAME.csv")
 if (STATS_FILE.exists().not()) {
     STATS_FILE.apply {
         createNewFile()
-        writeText("date,outdated dependencies,all dependencies,kotlin lines,java lines")
+        writeText("date,outdated dependencies,all dependencies,kotlin lines,java lines,kotlin compiler warnings")
     }
 }
 
@@ -92,24 +79,53 @@ System.setProperty("java.awt.headless", "false")
 
 val today: LocalDateTime = LocalDateTime.now()
 
-shellRun {
-    changeWorkingDirectory(REPOSITORY_DIR)
+shell {
+    val gradleInitDirectory = "/home/runner/.gradle/init.d/"
 
-    println(command("git", listOf("show", "--summary")))
+    "mkdir -p $gradleInitDirectory"()
+    "cp add-versions-plugin.gradle $gradleInitDirectory"()
+    "ls -ls $gradleInitDirectory"()
+
+    "git clone $REPOSITORY_URL $REPOSITORY_DIR"()
+
+    cd(REPOSITORY_DIR)
+
+    if (File("$REPOSITORY_DIR/gradle.properties-example").exists()) {
+        "cp gradle.properties-example gradle.properties"()
+    }
+
+    if (File("$REPOSITORY_DIR/local.properties-example").exists()) {
+        "cp local.properties-example local.properties"()
+    }
+
+    "ls"()
+
+    "git show --summary"()
 
     val clocReportFileName = "cloc.json"
-    println(command("cloc", listOf("--json", "--include-lang=Kotlin,Java", "--report-file=$clocReportFileName", ".")))
+    "cloc --json --include-lang=Kotlin,Java --report-file=$clocReportFileName ."()
     val clocReport = File("$REPOSITORY_DIR/$clocReportFileName").readText()
     val clocContainer = clocContainerAdapter.fromJson(clocReport)!!
 
-    println(command("./gradlew", listOf("dependencyUpdate", "--console=plain", "--refresh-dependencies")))
+    val out = StringBuilder()
+    pipeline {
+        "./gradlew ${args[COMPILE_TASK_ARGUMENT_ORDER]} --console=plain --rerun-tasks".process() pipe stringLambda {
+            print(it)
+            it to ""
+        } pipe out
+    }
+    val kotlinCompilerWarningLines: Set<String> = out.toString().split("\n").filter { it.startsWith("w:") }.toSet()
+    println("Counted ${kotlinCompilerWarningLines.size} Kotlin compiler warnings")
+
+    "./gradlew dependencyUpdate --console=plain --refresh-dependencies"()
+
     val dependencyReport = File("$REPOSITORY_DIR/report.json").readText()
     val dependenciesContainer = dependenciesContainerAdapter.fromJson(dependencyReport)!!
 
     STATS_FILE.apply {
         if (STATS_FILE.readText().contains(today.asString).not()) {
             appendText(
-                    StringBuilder()
+                StringBuilder()
                     .append("\n")
                     .append(today.asString)
                     .append(",")
@@ -120,26 +136,20 @@ shellRun {
                     .append(clocContainer.kotlin?.codeLines.orEmpty())
                     .append(",")
                     .append(clocContainer.java?.codeLines.orEmpty())
+                    .append(",")
+                    .append(kotlinCompilerWarningLines.size)
                     .toString()
             )
         }
     }
-    ""
-}
 
+    println("Committing stats update")
 
-println("Committing stats update")
-
-shellRun {
-    println(command("cat", listOf("$STATS_FILE")))
-    command("git", listOf("pull"))
-    command("git", listOf("add", "-A"))
-    command("git", listOf("config", "--local", "user.email", "\"action@github.com\""))
-    command("git", listOf("config", "--local", "user.name", "\"Github Action\""))
-    command(
-        "git",
-        listOf("commit", "-m", "Report update for $REPOSITORY_NAME on ${DATE_FORMATTER.format(LocalDate.now())}")
-    )
-    command("git", listOf("push"))
-    ""
+    "cat $STATS_FILE"()
+    "git pull"()
+    "git add -A"()
+    "git config, --local, user.email, \"action@github.com\""()
+    "git config, --local, user.name, \"Github Action\""()
+    "git commit -m \" Report update for $REPOSITORY_NAME on ${DATE_FORMATTER.format(LocalDate.now())}\""()
+    "git push"()
 }

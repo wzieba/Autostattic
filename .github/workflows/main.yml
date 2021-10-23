@@ -10,7 +10,7 @@ jobs:
     steps:
       - run: brew install cloc
       - uses: actions/checkout@v2
-      - run: kotlinc -script script.main.kts -- "https://github.com/woocommerce/woocommerce-android"
+      - run: kotlinc -script script.main.kts -- "https://github.com/woocommerce/woocommerce-android" "compileWasabiDebugKotlin"
         working-directory: script
   wordpress:
     runs-on: ubuntu-latest
@@ -18,7 +18,7 @@ jobs:
     steps:
       - run: brew install cloc
       - uses: actions/checkout@v2
-      - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-Android"
+      - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-Android" "compileWordpressWasabiDebugKotlin"
         working-directory: script
   simplenote:
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
     steps:
       - run: brew install cloc
       - uses: actions/checkout@v2
-      - run: kotlinc -script script.main.kts -- "https://github.com/Automattic/simplenote-android"
+      - run: kotlinc -script script.main.kts -- "https://github.com/Automattic/simplenote-android" "compileDebugKotlin"
         working-directory: script
   fluxc:
     runs-on: ubuntu-latest
@@ -34,7 +34,7 @@ jobs:
     steps:
       - run: brew install cloc
       - uses: actions/checkout@v2
-      - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-FluxC-Android"
+      - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-FluxC-Android" "compileDebugKotlin"
         working-directory: script
   wcstoreapp:
     runs-on: ubuntu-latest
@@ -42,7 +42,7 @@ jobs:
     steps:
       - run: brew install cloc
       - uses: actions/checkout@v2
-      - run: kotlinc -script script.main.kts -- "https://github.com/hichamboushaba/WCStoreApp"
+      - run: kotlinc -script script.main.kts -- "https://github.com/hichamboushaba/WCStoreApp" "compileDebugKotlin"
         working-directory: script
   build:
     runs-on: ubuntu-latest
