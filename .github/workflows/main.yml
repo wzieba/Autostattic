@@ -70,6 +70,7 @@ jobs:
         id: date
         run: echo "::set-output name=date::$(date +'%d/%m/%y')"
       - name: Push updated statistics to remote
+        continue-on-error: true
         run: |
           git diff
           git config --local user.email "action@github.com"
