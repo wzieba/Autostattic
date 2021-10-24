@@ -168,5 +168,4 @@ shell {
             )
         }
     }
-    "cat $STATS_FILE"()
 }
