@@ -1,7 +1,6 @@
 @file:Repository("https://repo.kotlin.link")
 @file:DependsOn("com.squareup.moshi:moshi-kotlin:1.12.0")
 @file:DependsOn("com.squareup.moshi:moshi-adapters:1.12.0")
-@file:DependsOn("com.lordcodes.turtle:turtle:0.5.0")
 @file:DependsOn("eu.jrie.jetbrains:kotlin-shell-kts:0.2.1")
 @file:CompilerOptions("-jvm-target", "11")
 @file:Suppress("EXPERIMENTAL_API_USAGE")
@@ -99,12 +98,10 @@ shell {
     val clocReport = File("$REPOSITORY_DIR/$clocReportFileName").readText()
     val clocContainer = clocContainerAdapter.fromJson(clocReport)!!
 
-    "./gradlew jacocoTestReport${args[VARIANT_ARGUMENT_ORDER]}"()
-    "./gradlew jacocoTestReportMerged"()
+    "./gradlew jacocoTestReport${args[VARIANT_ARGUMENT_ORDER]} --console=plain -Dorg.gradle.jvmargs=-Xmx1536m"()
+    "./gradlew jacocoTestReportMerged --console=plain -Dorg.gradle.jvmargs=-Xmx1536m"()
 
     val jacocoReport = File("${REPOSITORY_DIR}/build/reports/jacoco/jacoco.csv")
-
-    println(jacocoReport.readText())
 
     val (instructionsMissed, instructionsCovered) = jacocoReport.readText()
         .split("\n")
@@ -121,7 +118,7 @@ shell {
 
     val compileOutput = StringBuilder()
     pipeline {
-        "./gradlew compile${args[VARIANT_ARGUMENT_ORDER]}Kotlin --console=plain --rerun-tasks".process() pipe stringLambda {
+        "./gradlew compile${args[VARIANT_ARGUMENT_ORDER]}Kotlin --console=plain --rerun-tasks -Dorg.gradle.jvmargs=-Xmx1536m".process() pipe stringLambda {
             print(it)
             it to ""
         } pipe compileOutput
@@ -130,7 +127,7 @@ shell {
         compileOutput.toString().split("\n").filter { it.startsWith("w:") }.toSet()
     println("Counted ${kotlinCompilerWarningLines.size} Kotlin compiler warnings")
 
-    "./gradlew dependencyUpdate --console=plain --refresh-dependencies"()
+    "./gradlew dependencyUpdate --console=plain --refresh-dependencies -Dorg.gradle.jvmargs=-Xmx1536m"()
 
     val dependencyReport = File("$REPOSITORY_DIR/report.json").readText()
     val dependenciesContainer = dependenciesContainerAdapter.fromJson(dependencyReport)!!
