@@ -99,21 +99,12 @@ shell {
     val clocReport = File("$REPOSITORY_DIR/$clocReportFileName").readText()
     val clocContainer = clocContainerAdapter.fromJson(clocReport)!!
 
-    pipeline {
-        "./gradlew jacocoTestReport${args[VARIANT_ARGUMENT_ORDER]} jacocoTestReportMerged".process() pipe stringLambda {
-            it to ""
-        }
-    }
+    "./gradlew jacocoTestReport${args[VARIANT_ARGUMENT_ORDER]}"()
+    "./gradlew jacocoTestReportMerged"()
 
-    val jacocoPathOutput = StringBuilder()
-    pipeline {
-        "find . -name jacoco.csv".process() pipe stringLambda {
-            print(it)
-            it to ""
-        } pipe jacocoPathOutput
-    }
+    val jacocoReport = File("${REPOSITORY_DIR}/build/reports/jacoco/jacoco.csv")
 
-    val jacocoReport = File("${REPOSITORY_DIR}/${jacocoPathOutput.toString().trim().drop(2)}")
+    println(jacocoReport.readText())
 
     val (instructionsMissed, instructionsCovered) = jacocoReport.readText()
         .split("\n")
