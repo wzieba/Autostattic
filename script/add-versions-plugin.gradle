@@ -5,14 +5,16 @@ initscript {
     }
 
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:+'
-        classpath "com.dipien:bye-bye-jetifier:+"
+        classpath "com.github.ben-manes:gradle-versions-plugin:0.39.0"
+        classpath "com.dipien:bye-bye-jetifier:1.2.0"
+        classpath "com.vanniktech:gradle-android-junit-jacoco-plugin:0.16.0"
     }
 }
 
 rootProject {
     apply plugin: com.github.benmanes.gradle.versions.VersionsPlugin
     apply plugin: com.dipien.byebyejetifier.ByeByeJetifierGradlePlugin
+    apply plugin: com.vanniktech.android.junit.jacoco.GenerationPlugin
 
     tasks.named("dependencyUpdates").configure {
         def isNonStable = { String version ->

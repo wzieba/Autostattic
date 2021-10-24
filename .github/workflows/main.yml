@@ -10,7 +10,7 @@ jobs:
     steps:
       - run: brew install cloc
       - uses: actions/checkout@v2
-      - run: kotlinc -script script.main.kts -- "https://github.com/woocommerce/woocommerce-android" "compileWasabiDebugKotlin"
+      - run: kotlinc -script script.main.kts -- "https://github.com/woocommerce/woocommerce-android" "WasabiDebug"
         working-directory: script
       - uses: actions/upload-artifact@v2
         with:
@@ -20,7 +20,7 @@ jobs:
     steps:
       - run: brew install cloc
       - uses: actions/checkout@v2
-      - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-Android" "compileWordpressWasabiDebugKotlin"
+      - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-Android" "WordpressWasabiDebug"
         working-directory: script
       - uses: actions/upload-artifact@v2
         with:
@@ -30,7 +30,7 @@ jobs:
     steps:
       - run: brew install cloc
       - uses: actions/checkout@v2
-      - run: kotlinc -script script.main.kts -- "https://github.com/Automattic/simplenote-android" "compileDebugKotlin"
+      - run: kotlinc -script script.main.kts -- "https://github.com/Automattic/simplenote-android" "Debug"
         working-directory: script
       - uses: actions/upload-artifact@v2
         with:
@@ -40,7 +40,7 @@ jobs:
     steps:
       - run: brew install cloc
       - uses: actions/checkout@v2
-      - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-FluxC-Android" "compileDebugKotlin"
+      - run: kotlinc -script script.main.kts -- "https://github.com/wordpress-mobile/WordPress-FluxC-Android" "Debug"
         working-directory: script
       - uses: actions/upload-artifact@v2
         with:
@@ -50,7 +50,7 @@ jobs:
     steps:
       - run: brew install cloc
       - uses: actions/checkout@v2
-      - run: kotlinc -script script.main.kts -- "https://github.com/hichamboushaba/WCStoreApp" "compileDebugKotlin"
+      - run: kotlinc -script script.main.kts -- "https://github.com/hichamboushaba/WCStoreApp" "Debug"
         working-directory: script
       - uses: actions/upload-artifact@v2
         with:

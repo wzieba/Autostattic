@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
 
 val REPOSITORY_URL_ARGUMENT_ORDER = 0
-val COMPILE_TASK_ARGUMENT_ORDER = 1
+val VARIANT_ARGUMENT_ORDER = 1
 val REPOSITORY_URL = args[REPOSITORY_URL_ARGUMENT_ORDER]
 val REPOSITORY_NAME = REPOSITORY_URL.substring(REPOSITORY_URL.lastIndexOf('/') + 1)
 val REPOSITORY_DIR = "repo"
@@ -36,7 +36,7 @@ val STATS_FILE = File("../results/$REPOSITORY_NAME.csv")
 if (STATS_FILE.exists().not()) {
     STATS_FILE.apply {
         createNewFile()
-        writeText("date,outdated dependencies,all dependencies,kotlin lines,java lines,kotlin compiler warnings")
+        writeText("date,outdated dependencies,all dependencies,kotlin lines,java lines,kotlin compiler warnings,instructions missed, instructions covered")
     }
 }
 
@@ -99,14 +99,44 @@ shell {
     val clocReport = File("$REPOSITORY_DIR/$clocReportFileName").readText()
     val clocContainer = clocContainerAdapter.fromJson(clocReport)!!
 
-    val out = StringBuilder()
     pipeline {
-        "./gradlew ${args[COMPILE_TASK_ARGUMENT_ORDER]} --console=plain --rerun-tasks".process() pipe stringLambda {
+        "./gradlew jacocoTestReport${args[VARIANT_ARGUMENT_ORDER]}".process() pipe stringLambda {
+            it to ""
+        }
+    }
+
+    val jacocoPathOutput = StringBuilder()
+    pipeline {
+        "find . -name jacoco.csv".process() pipe stringLambda {
             print(it)
             it to ""
-        } pipe out
+        } pipe jacocoPathOutput
     }
-    val kotlinCompilerWarningLines: Set<String> = out.toString().split("\n").filter { it.startsWith("w:") }.toSet()
+
+    val jacocoReport = File("${REPOSITORY_DIR}/${jacocoPathOutput.toString().trim().drop(2)}")
+
+    val (instructionsMissed, instructionsCovered) = jacocoReport.readText()
+        .split("\n")
+        .drop(1)
+        .dropLast(1)
+        .map { line ->
+            line.split(",").let { it[3].toInt() to it[4].toInt() }
+        }.unzip()
+        .let { (missed, covered) ->
+            missed.sum() to covered.sum()
+        }
+
+    println("Code coverage report: $instructionsMissed instructions missed, $instructionsCovered instructions covered")
+
+    val compileOutput = StringBuilder()
+    pipeline {
+        "./gradlew compile${args[VARIANT_ARGUMENT_ORDER]}Kotlin --console=plain --rerun-tasks".process() pipe stringLambda {
+            print(it)
+            it to ""
+        } pipe compileOutput
+    }
+    val kotlinCompilerWarningLines: Set<String> =
+        compileOutput.toString().split("\n").filter { it.startsWith("w:") }.toSet()
     println("Counted ${kotlinCompilerWarningLines.size} Kotlin compiler warnings")
 
     "./gradlew dependencyUpdate --console=plain --refresh-dependencies"()
@@ -130,6 +160,10 @@ shell {
                     .append(clocContainer.java?.codeLines.orEmpty())
                     .append(",")
                     .append(kotlinCompilerWarningLines.size)
+                    .append(",")
+                    .append(instructionsMissed)
+                    .append(",")
+                    .append(instructionsCovered)
                     .toString()
             )
         }
