@@ -8,4 +8,5 @@ data class Record(
         val allDependencies: Int,
         val kotlinLines: Int?,
         val javaLines: Int?,
+        val compilerWarnings: Int?,
 )

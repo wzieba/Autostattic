@@ -16,7 +16,8 @@ class CsvParser {
                                 outdatedDependencies = rawValues[OUTDATED_DEPENDENCIES_INDEX].toInt(),
                                 allDependencies = rawValues[ALL_DEPENDENCIES_INDEX].toInt(),
                                 kotlinLines = rawValues.getOrNull(KOTLIN_LINES_INDEX)?.toIntOrNull(),
-                                javaLines = rawValues.getOrNull(JAVA_LINES_INDEX)?.toIntOrNull()
+                                javaLines = rawValues.getOrNull(JAVA_LINES_INDEX)?.toIntOrNull(),
+                                compilerWarnings = rawValues.getOrNull(COMPILER_WARNINGS_INDEX)?.toIntOrNull()
                         )
                     } catch (exception: Exception) {
                         console.log(exception)
@@ -43,5 +44,6 @@ class CsvParser {
         const val ALL_DEPENDENCIES_INDEX = 2
         const val KOTLIN_LINES_INDEX = 3
         const val JAVA_LINES_INDEX = 4
+        const val COMPILER_WARNINGS_INDEX = 5
     }
 }
