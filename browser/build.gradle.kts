@@ -23,6 +23,7 @@ val kotlinVersion: String by System.getProperties()
 val kvisionVersion: String by System.getProperties()
 
 val webDir = file("src/main/web")
+val resultsDir = file("../results")
 
 kotlin {
     js {
@@ -66,6 +67,7 @@ kotlin {
         implementation("io.kvision:kvision-testutils:$kvisionVersion")
     }
     sourceSets["main"].resources.srcDir(webDir)
+    sourceSets["main"].resources.srcDir(resultsDir)
 }
 
 afterEvaluate {

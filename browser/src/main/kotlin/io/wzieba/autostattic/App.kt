@@ -5,7 +5,7 @@ import io.kvision.html.*
 import io.kvision.navbar.*
 import io.kvision.navbar.nav
 import io.kvision.panel.*
-import io.wzieba.autostattic.data.GithubRestService
+import io.wzieba.autostattic.data.InnerFilesService
 import io.wzieba.autostattic.domain.Project
 import io.wzieba.autostattic.presentation.DependenciesChart
 import io.wzieba.autostattic.presentation.LanguageRatioChart
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 
 val AppScope = CoroutineScope(window.asCoroutineDispatcher())
-val service = GithubRestService()
+val service = InnerFilesService()
 val state = ViewState()
 
 class App : Application() {
