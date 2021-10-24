@@ -100,7 +100,7 @@ shell {
     val clocContainer = clocContainerAdapter.fromJson(clocReport)!!
 
     pipeline {
-        "./gradlew jacocoTestReport${args[VARIANT_ARGUMENT_ORDER]}".process() pipe stringLambda {
+        "./gradlew jacocoTestReport${args[VARIANT_ARGUMENT_ORDER]} jacocoTestReportMerged".process() pipe stringLambda {
             it to ""
         }
     }
