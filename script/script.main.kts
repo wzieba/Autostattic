@@ -6,35 +6,22 @@
 @file:CompilerOptions("-jvm-target", "11")
 @file:Suppress("EXPERIMENTAL_API_USAGE")
 
-import com.lordcodes.turtle.shellRun
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import eu.jrie.jetbrains.kotlinshell.shell.shell
-import kotlinx.coroutines.runBlocking
 import java.io.File
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.time.temporal.ChronoField
-
-println("Setting up Init Gradle Plugins")
-
-
-
-println("Repository configuration")
 
 val REPOSITORY_URL_ARGUMENT_ORDER = 0
 val COMPILE_TASK_ARGUMENT_ORDER = 1
 val REPOSITORY_URL = args[REPOSITORY_URL_ARGUMENT_ORDER]
 val REPOSITORY_NAME = REPOSITORY_URL.substring(REPOSITORY_URL.lastIndexOf('/') + 1)
 val REPOSITORY_DIR = "repo"
-
-
-
-println("Generating report")
 
 val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatterBuilder()
     .appendValue(ChronoField.DAY_OF_MONTH, 2)
@@ -80,11 +67,14 @@ System.setProperty("java.awt.headless", "false")
 val today: LocalDateTime = LocalDateTime.now()
 
 shell {
+    println("Setting up Init Gradle Plugins")
     val gradleInitDirectory = "/home/runner/.gradle/init.d/"
 
     "mkdir -p $gradleInitDirectory"()
     "cp add-versions-plugin.gradle $gradleInitDirectory"()
     "ls -ls $gradleInitDirectory"()
+
+    println("Repository configuration")
 
     "git clone $REPOSITORY_URL $REPOSITORY_DIR"()
 
@@ -101,6 +91,8 @@ shell {
     "ls"()
 
     "git show --summary"()
+
+    println("Generating report")
 
     val clocReportFileName = "cloc.json"
     "cloc --json --include-lang=Kotlin,Java --report-file=$clocReportFileName ."()
@@ -142,14 +134,5 @@ shell {
             )
         }
     }
-
-    println("Committing stats update")
-
     "cat $STATS_FILE"()
-    "git pull"()
-    "git add -A"()
-    "git config, --local, user.email, \"action@github.com\""()
-    "git config, --local, user.name, \"Github Action\""()
-    "git commit -m \" Report update for $REPOSITORY_NAME on ${DATE_FORMATTER.format(LocalDate.now())}\""()
-    "git push"()
 }
