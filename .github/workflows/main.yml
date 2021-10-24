@@ -57,6 +57,7 @@ jobs:
           path: results/WCStoreApp.csv
   build:
     runs-on: ubuntu-latest
+    if: always()
     name: "Build browser site"
     needs: [ woocommerce, wordpress, simplenote, fluxc, wcstoreapp ]
     steps:
