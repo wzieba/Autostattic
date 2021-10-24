@@ -1,4 +1,4 @@
-date,outdated dependencies,all dependencies,kotlin lines,java lines
+date,outdated dependencies,all dependencies,kotlin lines,java lines,kotlin compiler warnings
 30/09/2021,33,45
 04/10/2021,32,49
 05/10/2021,8,50,5349,
@@ -20,4 +20,4 @@ date,outdated dependencies,all dependencies,kotlin lines,java lines
 21/10/2021,20,50,5828,
 22/10/2021,20,50,5828,
 23/10/2021,20,50,5828,
-24/10/2021,20,50,5828,
+24/10/2021,20,50,5828,,15

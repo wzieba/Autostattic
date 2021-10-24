@@ -1,8 +1,6 @@
 package io.wzieba.autostattic.presentation
 
 import io.kvision.chart.*
-import io.kvision.core.Col
-import io.kvision.core.Color
 import io.wzieba.autostattic.domain.Record
 import io.wzieba.autostattic.jsObject
 import kotlin.js.Date

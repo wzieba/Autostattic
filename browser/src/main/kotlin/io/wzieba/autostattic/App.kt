@@ -5,8 +5,9 @@ import io.kvision.html.*
 import io.kvision.navbar.*
 import io.kvision.navbar.nav
 import io.kvision.panel.*
-import io.wzieba.autostattic.data.GithubRestService
+import io.wzieba.autostattic.data.InnerFilesService
 import io.wzieba.autostattic.domain.Project
+import io.wzieba.autostattic.presentation.CompilerWarningsChart
 import io.wzieba.autostattic.presentation.DependenciesChart
 import io.wzieba.autostattic.presentation.LanguageRatioChart
 import io.wzieba.autostattic.presentation.ViewState
@@ -16,7 +17,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 
 val AppScope = CoroutineScope(window.asCoroutineDispatcher())
-val service = GithubRestService()
+val service = InnerFilesService()
 val state = ViewState()
 
 class App : Application() {
@@ -33,14 +34,24 @@ class App : Application() {
                 }
             }
 
-            div(className = "row p-4") {
+            div(){
                 val dependenciesChartContainer = Div(className = "card")
                 val languageRatioChartContainer = Div(className = "card")
-                div(className = "col") {
-                    add(dependenciesChartContainer)
+                val compilerWarningsChartContainer = Div(className = "card")
+
+                div(className = "row p-4") {
+                    div(className = "col-6") {
+                        add(dependenciesChartContainer)
+                    }
+                    div(className = "col-6") {
+                        add(languageRatioChartContainer)
+                    }
+
                 }
-                div(className = "col") {
-                    add(languageRatioChartContainer)
+                div(className = "row p-4"){
+                    div(className = "col-6"){
+                        add(compilerWarningsChartContainer)
+                    }
                 }
                 AppScope.launch {
                     state.currentlyVisibleProject.combine(state.statistics) { project, statistics ->
@@ -52,6 +63,9 @@ class App : Application() {
 
                             languageRatioChartContainer.removeAll()
                             languageRatioChartContainer.add(LanguageRatioChart(records))
+
+                            compilerWarningsChartContainer.removeAll()
+                            compilerWarningsChartContainer.add(CompilerWarningsChart(records))
                         }
 
                     }.collect()
