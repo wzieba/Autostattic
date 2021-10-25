@@ -1,4 +1,4 @@
-date,outdated dependencies,all dependencies,kotlin lines,java lines,kotlin compiler warnings,instructions missed, instructions covered
+date,outdated dependencies,all dependencies,kotlin lines,java lines,kotlin compiler warnings
 25/09/2021,53,67
 26/09/2021,53,67
 27/09/2021,53,67
@@ -28,4 +28,5 @@ date,outdated dependencies,all dependencies,kotlin lines,java lines,kotlin compi
 21/10/2021,52,70,83430,40161
 22/10/2021,52,70,83531,40161
 23/10/2021,52,70,83535,40161
-24/10/2021,52,70,83535,40161,95,261893,56130
+24/10/2021,52,70,83535,40161,95
+25/10/2021,52,70,83535,40161,95
