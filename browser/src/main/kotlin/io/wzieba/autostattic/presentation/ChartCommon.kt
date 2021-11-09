@@ -12,7 +12,7 @@ val beginWithZeroScale = jsObject {
 }
 
 fun Date.toLabel(): String {
-    return this.toStringF("DD/MM/YY")
+    return this.toStringF("DD MMM YY")
 }
 
 fun defaultTitleOptions(text: String) = TitleOptions(

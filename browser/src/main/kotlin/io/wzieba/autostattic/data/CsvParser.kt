@@ -31,9 +31,9 @@ class CsvParser {
                 .map(String::toInt)
                 .let {
                     Date(
-                            it[2],
-                            it[1],
-                            it[0],
+                            year = it[2],
+                            month = it[1] - 1,
+                            day = it[0],
                     )
                 }
     }
