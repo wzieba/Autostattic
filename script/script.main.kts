@@ -1,7 +1,6 @@
-@file:Repository("https://repo.kotlin.link")
+@file:Repository("https://repo.maven.apache.org/maven2/")
 @file:DependsOn("com.squareup.moshi:moshi-kotlin:1.12.0")
 @file:DependsOn("com.squareup.moshi:moshi-adapters:1.12.0")
-@file:DependsOn("com.lordcodes.turtle:turtle:0.5.0")
 @file:DependsOn("eu.jrie.jetbrains:kotlin-shell-kts:0.2.1")
 @file:CompilerOptions("-jvm-target", "11")
 @file:Suppress("EXPERIMENTAL_API_USAGE")
